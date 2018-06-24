@@ -1,7 +1,6 @@
 package com.barber.kafka.avro
 
 import java.util.Properties
-
 import com.barber.kafka.avro.models.User
 import org.apache.avro.Schema
 import org.apache.avro.io.DatumReader
@@ -12,11 +11,9 @@ import org.apache.avro.io.DecoderFactory
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.TimeoutException
 import java.util.Collections
-
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
-
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
@@ -38,12 +35,12 @@ class KafkaDemoAvroConsumer(val topic:String) {
   props.put("key.deserializer", classOf[StringDeserializer].getCanonicalName)
   props.put("value.deserializer",classOf[ByteArrayDeserializer].getCanonicalName)
 
-
   private val consumer = new KafkaConsumer[String, Array[Byte]](props)
 
   def start() = {
 
     try {
+      Runtime.getRuntime.addShutdownHook(new Thread(() => close()))
 
       consumer.subscribe(Collections.singletonList(topic))
 
@@ -74,31 +71,30 @@ class KafkaDemoAvroConsumer(val topic:String) {
   }
 
 
-    private def parseUser(message: Array[Byte]): Option[User] = {
+  private def parseUser(message: Array[Byte]): Option[User] = {
 
-      // Deserialize and create generic record
-      val reader: DatumReader[GenericRecord] = new SpecificDatumReader[GenericRecord](schema)
-      val decoder: Decoder = DecoderFactory.get().binaryDecoder(message, null)
-      val userData: GenericRecord = reader.read(null, decoder)
+    // Deserialize and create generic record
+    val reader: DatumReader[GenericRecord] =
+      new SpecificDatumReader[GenericRecord](schema)
+    val decoder: Decoder = DecoderFactory.get().binaryDecoder(message, null)
+    val userData: GenericRecord = reader.read(null, decoder)
 
-      // Make user object
-      val finalUser = Try[User](
-        User(userData.get("id").toString.toInt, userData.get("name").toString, try {
-          Some(userData.get("email").toString)
-        } catch {
-          case _ => None
-        })
-      )
+    // Make user object
+    val finalUser = Try[User](
+      User(userData.get("id").toString.toInt, userData.get("name").toString, try {
+        Some(userData.get("email").toString)
+      } catch {
+        case _ => None
+      })
+    )
 
-      finalUser match {
-        case Success(u) =>
-          Some(u)
-        case Failure(e) =>
-          None
-      }
+    finalUser match {
+      case Success(u) =>
+        Some(u)
+      case Failure(e) =>
+        None
     }
-
-
+  }
 
   def close(): Unit = shouldRun = false
 
