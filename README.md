@@ -5,9 +5,8 @@ Set of repositories where we use Apache Avro with Apache Kafka (Kafka Producer/ 
 This repo includes several stand alone projects (Scala IntelliJ IDEA SBT projects) that will cover the following topics
 
 - Apache Kafka Generic Avro Producer/Consumer
-- Apache Kafka Specific Avro Producer/Consumer 
+- Apache Kafka Specific Avro Producer/Consumer + Schema Registry intergration 
 - Apache Kafka Schema Registry playground
-- Apache Kafka Specific Avro Producer/Consumer + Schema Registry intergration
 - Apache Kafka Specific Avro Kafka Streams + Schema Registry intergration
 
 # Prerequisites
