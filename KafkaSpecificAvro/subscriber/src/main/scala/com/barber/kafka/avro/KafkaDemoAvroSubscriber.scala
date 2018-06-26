@@ -16,7 +16,7 @@ class KafkaDemoAvroSubscriber(val topic:String) {
   var shouldRun : Boolean = true
 
   props.put("bootstrap.servers", "localhost:9092")
-  props.put("schema.registry.url", "localhost:8081")
+  props.put("schema.registry.url", "http://localhost:8081")
   props.put("group.id", groupId)
   props.put("enable.auto.commit", "true")
   props.put("auto.commit.interval.ms", "10000")
@@ -26,7 +26,7 @@ class KafkaDemoAvroSubscriber(val topic:String) {
   props.put("value.deserializer",classOf[KafkaAvroDeserializer].getCanonicalName)
   props.put("specific.avro.reader", "true")
 
-  private val consumer = new KafkaConsumer[String, User](props)
+  private val consumer = new KafkaConsumer[String, com.barber.kafka.avro.User](props)
 
   def start() = {
 
@@ -36,11 +36,11 @@ class KafkaDemoAvroSubscriber(val topic:String) {
       consumer.subscribe(Collections.singletonList(topic))
 
       while (shouldRun) {
-        val records: ConsumerRecords[String,  User] = consumer.poll(1000)
+        val records: ConsumerRecords[String,  com.barber.kafka.avro.User] = consumer.poll(1000)
         val it = records.iterator()
         while(it.hasNext()) {
           println("Getting message from queue.............")
-          val record: ConsumerRecord[String,  User] = it.next()
+          val record: ConsumerRecord[String,  com.barber.kafka.avro.User] = it.next()
           val recievedItem =record.value()
           println(s"Saw User ${recievedItem}")
           consumer.commitSync
