@@ -15,6 +15,7 @@ class KafkaDemoAvroPublisher(val topic:String) {
   props.put("client.id", UUID.randomUUID().toString())
 
   private val producer =   new KafkaProducer[String,User](props)
+  private val producerBad =   new KafkaProducer[String,UserWithoutName](props)
 
   def send(): Unit = {
     try {
@@ -27,6 +28,21 @@ class KafkaDemoAvroPublisher(val topic:String) {
         producer.send(new ProducerRecord[String, User](topic, itemToSend))
         producer.flush()
       }
+
+
+
+
+      //these should fail since they do not match the current Topic Schema (User Avro file/schema)
+      println("Sending some bad 'UserWithoutName' which should break against current topc Schema")
+      for(i <- 1 to 10) {
+        val id = rand.nextInt()
+        val itemToSend = UserWithoutName(id)
+        println(s"Producer sending data ${itemToSend.toString}")
+        producerBad.send(new ProducerRecord[String, UserWithoutName](topic, itemToSend))
+        producerBad.flush()
+      }
+
+
     } catch {
       case ex: Exception =>
         println(ex.printStackTrace().toString)
