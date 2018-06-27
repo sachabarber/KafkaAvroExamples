@@ -24,6 +24,7 @@ class KafkaDemoAvroSubscriber(val topic:String) {
   props.put("consumer.timeout.ms", "120000")
   props.put("key.deserializer", classOf[StringDeserializer].getCanonicalName)
   props.put("value.deserializer",classOf[KafkaAvroDeserializer].getCanonicalName)
+  //Use Specific Record or else you get Avro GenericRecord.
   props.put("specific.avro.reader", "true")
 
   private val consumer = new KafkaConsumer[String, com.barber.kafka.avro.User](props)

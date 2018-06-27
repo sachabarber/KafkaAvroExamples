@@ -1,16 +1,9 @@
 package com.barber.kafka.avro
 
 import java.util.{Properties, UUID}
-
 import io.confluent.kafka.serializers.KafkaAvroSerializer
-import org.apache.avro.specific.SpecificRecord
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.serialization.StringSerializer
-
-import scala.io.Source
-
-
-
 
 class KafkaDemoAvroPublisher(val topic:String) {
 
@@ -21,13 +14,13 @@ class KafkaDemoAvroPublisher(val topic:String) {
   props.put("value.serializer",classOf[KafkaAvroSerializer].getCanonicalName)
   props.put("client.id", UUID.randomUUID().toString())
 
-
   private val producer =   new KafkaProducer[String,User](props)
 
   def send(): Unit = {
     try {
       val rand =  new scala.util.Random(44343)
-      while(true) {
+
+      for(i <- 1 to 10) {
         val id = rand.nextInt()
         val itemToSend = User(id , "ishot.com")
         println(s"Producer sending data ${itemToSend.toString}")
