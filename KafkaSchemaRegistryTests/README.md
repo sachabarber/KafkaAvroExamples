@@ -1,6 +1,6 @@
-# KafkaGenericAvro
+# KafkaSchemaRegistryTests
 
-Shows how to use GenericRecord to send/receive Avro using Kafka
+Has a a bunch of tests that show how the Schema Registry actually works 
 
 Assuming you have changed where your
 
@@ -11,5 +11,5 @@ Store their data, and have updated the **RunThePipeline.ps1** PowerShell script,
 
 - \RunThePipeline.ps1
 - Open SBT, and do SBT compile
-- Run **ProducerApp** inside IntelliJ IDEA
-- Run **ConsumerApp** inside IntelliJ IDEA
+- Open the tests inside of IntelliJ IDEA, and run the tests you want to run
+

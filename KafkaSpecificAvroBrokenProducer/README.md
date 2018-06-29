@@ -1,4 +1,6 @@
-# KafkaSpecificAvro with Kafka Schema Registry
+# KafkaSpecificAvro with Kafka Schema Registry 
+
+Shows working/broken Avro objects against Kafka Schema Registry, from the point of view of a Kafka producer
 
 Assuming you have changed where your
 
@@ -9,5 +11,5 @@ Store their data, and have updated the **RunThePipeline.ps1** PowerShell script,
 
 - \RunThePipeline.ps1
 - Open SBT, and do SBT compile
-- Run **KafkaSpecificAvro\producer\src\main\scala\com\barber\avro\ProducerApp** inside IntelliJ IDEA
-- Run **KafkaSpecificAvro\subscriber\src\main\scala\com\barber\avro\SubscriberApp** inside IntelliJ IDEA
+- Run **KafkaSpecificAvroBrokenProducer\producer\src\main\scala\com\barber\avro\ProducerApp** inside IntelliJ IDEA
+

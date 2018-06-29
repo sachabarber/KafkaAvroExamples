@@ -1,5 +1,7 @@
 # KafkaSpecificAvro with Kafka Schema Registry
 
+Shows how to use your own specific format Avro objects with Kafka
+
 Assuming you have changed where your
 
 - Kafka logs

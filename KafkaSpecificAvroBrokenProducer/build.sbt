@@ -24,17 +24,6 @@ lazy val publisher = (project in file ("publisher")).
       logBack)
   ).dependsOn(common)
 
-lazy val subscriber = (project in file ("subscriber")).
-  settings(
-    name := "subscriber",
-    /* sourceGenerators in Compile += (avroScalaGenerateSpecific in Compile).taskValue, */
-    libraryDependencies ++= Seq(
-      kafka,
-      avro,
-      avroSerializer,
-      logBack)
-  ).dependsOn(publisher, common)
-  
   lazy val common = (project in file ("common")).
   settings(
     name := "common",

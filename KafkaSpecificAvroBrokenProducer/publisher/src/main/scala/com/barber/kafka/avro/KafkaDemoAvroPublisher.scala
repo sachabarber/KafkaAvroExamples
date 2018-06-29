@@ -16,6 +16,7 @@ class KafkaDemoAvroPublisher(val topic:String) {
   props.put("client.id", UUID.randomUUID().toString())
 
   private val producer =   new KafkaProducer[String,User](props)
+  private val producerUserWithoutName =   new KafkaProducer[String,UserWithoutName](props)
   private val producerUserWithBooleanIdBad =   new KafkaProducer[String,UserWithBooleanId](props)
   private val producerAnotherExampleWithStringIdBad = new KafkaProducer[String,AnotherExampleWithStringId](props)
 
@@ -23,6 +24,9 @@ class KafkaDemoAvroPublisher(val topic:String) {
     try {
       val rand =  new scala.util.Random(44343)
 
+      //we expect this to work, as its the one that is going to define the Avro format of then topic
+      //since its the 1st published message on the topic (Assuming you have not preregistered the topic key + Avro schemea
+      //with the schema registry already)
       for(i <- 1 to 10) {
         val id = rand.nextInt()
         val itemToSend = User(id , "ishot.com")
@@ -30,6 +34,17 @@ class KafkaDemoAvroPublisher(val topic:String) {
         producer.send(new ProducerRecord[String, User](topic, itemToSend))
         producer.flush()
       }
+
+
+      //we expect this to work as having a User without a name is ok, as Name is a "string" so can be empty
+      for(i <- 1 to 10) {
+        val id = rand.nextInt()
+        val itemToSend = UserWithoutName(id)
+        println(s"Producer sending data ${itemToSend.toString}")
+        producerUserWithoutName.send(new ProducerRecord[String, UserWithoutName](topic, itemToSend))
+        producerUserWithoutName.flush()
+      }
+
 
       //we expect this to fail as its trying to send a different incompatible Avro object on the topic
       //which is currently using the "User" (Avro object / Schema)
