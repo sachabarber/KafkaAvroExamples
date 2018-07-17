@@ -7,6 +7,7 @@ import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import org.apache.avro.specific.SpecificRecord
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.common.serialization.Serdes.StringSerde
 import org.apache.kafka.common.serialization.{Serde, Serdes, StringDeserializer}
 import org.apache.kafka.streams.kstream.{KStream, Produced}
 
@@ -23,7 +24,7 @@ class KafkaDemoAvroStreams(val inputTopic:String, val outputTopic:String) {
     val p = new Properties()
     p.put(StreamsConfig.APPLICATION_ID_CONFIG, "avro-stream-demo-topic-streams")
     p.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
-    p.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, classOf[StringDeserializer].getCanonicalName)
+    p.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName())
     p.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, classOf[SpecificAvroSerde[_ <: SpecificRecord]])
     p.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,  "http://localhost:8081")
     p.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")

@@ -11,5 +11,6 @@ Store their data, and have updated the **RunThePipeline.ps1** PowerShell script,
 
 - \RunThePipeline.ps1
 - Open SBT, and do SBT compile
-- Open the tests inside of IntelliJ IDEA, and run the tests you want to run
+- Run **\KafkaSchemaRegistryTests\src\main\scala\com\barber\avro\RegistryApp** inside IntelliJ IDEA
+
 
