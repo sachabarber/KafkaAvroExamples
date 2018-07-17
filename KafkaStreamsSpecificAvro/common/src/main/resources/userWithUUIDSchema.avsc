@@ -1,7 +1,7 @@
 {
     "namespace": "com.barber.kafka.avro",
      "type": "record",
-     "name": "User",
+     "name": "UserWithUUID",
      "fields":[
          {
             "name": "id", "type": "int"

@@ -12,7 +12,7 @@ import org.apache.kafka.common.serialization.{Serde, Serdes, StringDeserializer}
 import org.apache.kafka.streams.kstream.{KStream, Produced}
 
 import scala.concurrent.TimeoutException
-import org.apache.kafka.streams.{KafkaStreams, StreamsBuilder, StreamsConfig}
+import org.apache.kafka.streams.{KafkaStreams, KeyValue, StreamsBuilder, StreamsConfig}
 
 class KafkaDemoAvroStreams(val inputTopic:String, val outputTopic:String) {
 
@@ -50,17 +50,36 @@ class KafkaDemoAvroStreams(val inputTopic:String, val outputTopic:String) {
       // However, in the code below we intentionally override the default serdes in `to()` to
       // demonstrate how you can construct and configure a specific Avro serde manually.
       val stringSerde: Serde[String] = Serdes.String
-      val specificAvroSerde: Serde[User] = new SpecificAvroSerde[User]
+      val specificAvroUserSerde: Serde[User] = new SpecificAvroSerde[User]
+      val specificAvroUserWithUUIDSerde: Serde[UserWithUUID] = new SpecificAvroSerde[UserWithUUID]
+
       // Note how we must manually call `configure()` on this serde to configure the schema registry
       // url.  This is different from the case of setting default serdes (see `streamsConfiguration`
       // above), which will be auto-configured based on the `StreamsConfiguration` instance.
       val isKeySerde: Boolean = false
-      specificAvroSerde.configure(
+      specificAvroUserSerde.configure(
         Collections.singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
         "http://localhost:8081"), isKeySerde)
+      specificAvroUserWithUUIDSerde.configure(
+        Collections.singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
+          "http://localhost:8081"), isKeySerde)
+
 
       val stream: KStream[String, User] = builder.stream(inputTopic)
-      stream.to(outputTopic, Produced.`with`(stringSerde, specificAvroSerde))
+
+      //do simple map on the User to get UserWithUUID
+      //val mappedStream  =
+      //  stream.mapValues[UserWithUUID]((x:User) => UserWithUUID(x.id,x.name, java.util.UUID.randomUUID().toString()))
+
+      val mappedStream  =
+        stream.map[String, UserWithUUID]((k,v) => {
+            println("Streams saw messsage ============ ")
+            println(s"Saw User ${v}")
+            new KeyValue(k, UserWithUUID(v.id,v.name, java.util.UUID.randomUUID().toString()))
+        })
+
+      //send UserWithUUID out on output topic
+      mappedStream.to(outputTopic, Produced.`with`(stringSerde, specificAvroUserWithUUIDSerde))
       streams = Some(new KafkaStreams(builder.build(), streamsConfiguration))
       streams.map(_.start())
 

@@ -2,7 +2,7 @@ $global:kafkaWindowsBatFolder = "C:\Apache\confluent-3.3.0\bin\windows\"
 $global:kafkaAndZooLoggingFolder = "C:\temp\"
 
 
-$global:kafkaTopics = @("avro-streams-input-topic","avro-streams-output-topic" )
+$global:kafkaTopics = @("avro-streams-input-topic","avro-streams-useruuid-output-topic" )
 	
 $global:ProcessesToKill = @()
 

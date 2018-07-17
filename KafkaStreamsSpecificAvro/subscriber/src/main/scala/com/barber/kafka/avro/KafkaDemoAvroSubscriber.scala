@@ -12,7 +12,7 @@ import org.apache.kafka.common.serialization.StringDeserializer
 class KafkaDemoAvroSubscriber(val topic:String) {
 
   private val props = new Properties()
-  val groupId = "avro-stream-demo-topic-consumer"
+  val groupId = "avro-stream-demo-topic-useruuid-consumer"
   var shouldRun : Boolean = true
 
   props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
@@ -27,7 +27,7 @@ class KafkaDemoAvroSubscriber(val topic:String) {
   //Use Specific Record or else you get Avro GenericRecord.
   props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true")
 
-  private val consumer = new KafkaConsumer[String, com.barber.kafka.avro.User](props)
+  private val consumer = new KafkaConsumer[String, com.barber.kafka.avro.UserWithUUID](props)
 
   def start() = {
 
@@ -37,13 +37,13 @@ class KafkaDemoAvroSubscriber(val topic:String) {
       consumer.subscribe(Collections.singletonList(topic))
 
       while (shouldRun) {
-        val records: ConsumerRecords[String,  com.barber.kafka.avro.User] = consumer.poll(1000)
+        val records: ConsumerRecords[String,  com.barber.kafka.avro.UserWithUUID] = consumer.poll(1000)
         val it = records.iterator()
         while(it.hasNext()) {
           println("Getting message from queue.............")
-          val record: ConsumerRecord[String,  com.barber.kafka.avro.User] = it.next()
+          val record: ConsumerRecord[String,  com.barber.kafka.avro.UserWithUUID] = it.next()
           val recievedItem =record.value()
-          println(s"Saw User ${recievedItem}")
+          println(s"Saw UserWithUUID ${recievedItem}")
           consumer.commitSync
         }
       }
