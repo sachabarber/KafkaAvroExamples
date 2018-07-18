@@ -41,9 +41,15 @@ class KafkaDemoAvroStreams(val inputTopic:String, val outputTopic:String) {
 
       // Write the input data as-is to the output topic.
       //
-      // Normally, because a) we have already configured the correct default serdes for keys and
-      // values and b) the types for keys and values are the same for both the input topic and the
-      // output topic, we would only need to define:
+      // If
+      //
+      // a) we have already configured the correct default serdes for keys and
+      // values
+      //
+      // b) the types for keys and values are the same for both the input topic and the
+      // output topic
+      //
+      // We would only need to define:
       //
       //   builder.stream(inputTopic).to(outputTopic);
       //
@@ -66,10 +72,6 @@ class KafkaDemoAvroStreams(val inputTopic:String, val outputTopic:String) {
 
 
       val stream: KStream[String, User] = builder.stream(inputTopic)
-
-      //do simple map on the User to get UserWithUUID
-      //val mappedStream  =
-      //  stream.mapValues[UserWithUUID]((x:User) => UserWithUUID(x.id,x.name, java.util.UUID.randomUUID().toString()))
 
       val mappedStream  =
         stream.map[String, UserWithUUID]((k,v) => {
